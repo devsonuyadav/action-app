@@ -1,7 +1,7 @@
 export const COLORS = {
   primary: {
-    default: '#005BD4',
-    strong: '#0041AC',
+    default: '#154e87',
+    strong: '#022f5a',
     weak: '#50C8FC',
     bg_strong: '#8DE9FF',
     bg: '#E3FEFF',

@@ -13,7 +13,7 @@ import {
   UIManager,
 } from 'react-native';
 
-import {COLORS, SIZE, FONTS} from '../theme';
+import {COLORS, SIZE, FONTS} from '../../theme';
 
 import {
   widthPercentageToDP as wp,
@@ -40,13 +40,14 @@ export interface InputProps extends TextInputProps {
   showClear?: boolean;
   type?: 'FLOATING' | 'DEFAULT';
   marginTop?: number;
+  rightComponent?: React.JSX.Element;
 }
 
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
+// if (Platform.OS === 'android') {
+//   if (UIManager.setLayoutAnimationEnabledExperimental) {
+//     UIManager.setLayoutAnimationEnabledExperimental(true);
+//   }
+// }
 
 const Input = (
   {marginTop = 2, editable = true, ...props}: InputProps,
@@ -187,7 +188,7 @@ const Input = (
               paddingLeft: isPad
                 ? wp(props.icon ? 0.1 : 0)
                 : wp(props?.icon ? 4 : 0),
-              width: props?.showClear ? wp(65) : wp(80),
+              width: props?.rightComponent ? wp(70) : wp(80),
               marginTop: props.type === 'DEFAULT' ? hp(0) : hp(marginTop),
             },
           ]}
@@ -195,19 +196,8 @@ const Input = (
           secureTextEntry={props.secureTextEntry}
           selectionColor={COLORS.primary.default}
         />
-        {props.showClear && (
-          <Pressable
-            onPress={() => {
-              ref?.current?.clear();
-              setValue('');
-            }}
-            style={{
-              marginRight: wp(5),
-              height: wp(5),
-              width: wp(5),
-            }}>
-            {/* {value && <Cross />} */}
-          </Pressable>
+        {props.rightComponent && (
+          <View style={{marginRight: wp(5)}}>{props.rightComponent}</View>
         )}
       </View>
       {props.error && (
@@ -229,7 +219,7 @@ const styles = StyleSheet.create({
 
     paddingVertical: hp(2),
     paddingHorizontal: wp(7),
-    backgroundColor: 'white',
+
     //@ts-ignore
     height: isPad ? wp(10) : wp(15),
     width: 'auto',
