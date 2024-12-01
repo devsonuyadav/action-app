@@ -2,7 +2,6 @@ import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
-  Button,
   Image,
   StyleSheet,
   StatusBar,
@@ -76,7 +75,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     },
   ];
   const [homeData, setHomeData] = useState(HOME_DATA);
-  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const modalRef = useRef<BottomSheetModal>(null);
   const dispatch = useDispatch();
   const onLogout = async () => {
@@ -170,53 +168,56 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           </Pressable>
         </View>
       </View>
-      <Modal ref={modalRef}>
-        <View style={{padding: 20, alignItems: 'center'}}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontFamily: FONTS.SEMI_BOLD,
-              marginBottom: 20,
-              color: COLORS.primary.strong,
-            }}>
-            Are you sure you want to logout?
-          </Text>
-
-          <View style={{flexDirection: 'row', gap: 20}}>
-            <TouchableOpacity
-              onPress={onLogoutConfirm}
+      <Modal
+        ref={modalRef}
+        children={
+          <View style={{padding: 20, alignItems: 'center'}}>
+            <Text
               style={{
-                backgroundColor: COLORS.primary.strong,
-                paddingVertical: 10,
-                paddingHorizontal: 30,
-                borderRadius: 8,
+                fontSize: 18,
+                fontFamily: FONTS.SEMI_BOLD,
+                marginBottom: 20,
+                color: COLORS.primary.strong,
               }}>
-              <Text style={{color: 'white', fontFamily: FONTS.SEMI_BOLD}}>
-                Yes
-              </Text>
-            </TouchableOpacity>
+              Are you sure you want to logout?
+            </Text>
 
-            <TouchableOpacity
-              onPress={() => {
-                modalRef?.current?.dismiss();
-              }}
-              style={{
-                backgroundColor: '#e0e0e0',
-                paddingVertical: 10,
-                paddingHorizontal: 30,
-                borderRadius: 8,
-              }}>
-              <Text
+            <View style={{flexDirection: 'row', gap: 20}}>
+              <TouchableOpacity
+                onPress={onLogoutConfirm}
                 style={{
-                  color: COLORS.primary.strong,
-                  fontFamily: FONTS.SEMI_BOLD,
+                  backgroundColor: COLORS.primary.strong,
+                  paddingVertical: 10,
+                  paddingHorizontal: 30,
+                  borderRadius: 8,
                 }}>
-                No
-              </Text>
-            </TouchableOpacity>
+                <Text style={{color: 'white', fontFamily: FONTS.SEMI_BOLD}}>
+                  Yes
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  modalRef?.current?.dismiss();
+                }}
+                style={{
+                  backgroundColor: '#e0e0e0',
+                  paddingVertical: 10,
+                  paddingHorizontal: 30,
+                  borderRadius: 8,
+                }}>
+                <Text
+                  style={{
+                    color: COLORS.primary.strong,
+                    fontFamily: FONTS.SEMI_BOLD,
+                  }}>
+                  No
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        }
+      />
     </>
   );
 };

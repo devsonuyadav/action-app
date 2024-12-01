@@ -57,7 +57,6 @@ const Login = () => {
       if (username === TEST_USERNAME) {
         dispatch(setVerified(true));
         dispatch(setUser(response));
-        navigaton.navigate('Home');
         return;
       }
       navigaton.navigate('Otp');
