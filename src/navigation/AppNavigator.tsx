@@ -9,9 +9,10 @@ import {COLORS} from '../theme';
 import {StatusBar} from 'react-native';
 import IState from '../redux/store/type';
 import {useDispatch, useSelector} from 'react-redux';
-import {setVerified} from '../redux/slices/auth';
+import {setUser, setVerified} from '../redux/slices/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthVerifier from '../screens/auth/AuthVerifier';
+import {verifyUser} from '../services/auth';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -51,8 +52,16 @@ export const AppNavigator = () => {
   const checkAuth = async () => {
     setIsLoading(true);
     const employeeId = await AsyncStorage.getItem('employeeId');
-    if (employeeId) {
+    if (!employeeId) {
+      dispatch(setVerified(false));
+      setIsLoading(false);
+      return;
+    }
+    const verifiedUser = await verifyUser(employeeId);
+    console.log({verifiedUser});
+    if (verifiedUser && verifiedUser.employeeId) {
       dispatch(setVerified(true));
+      dispatch(setUser(verifiedUser));
     }
     setIsLoading(false);
   };

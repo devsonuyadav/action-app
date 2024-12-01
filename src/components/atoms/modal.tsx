@@ -1,41 +1,73 @@
-import React, {ReactNode} from 'react';
-import Modal from 'react-native-modal';
-import {View, StyleSheet} from 'react-native';
+import React, {forwardRef, useCallback, useRef} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
-interface ModalProps {
-  isVisible: boolean;
-  onClose: () => void;
-  children: ReactNode;
-  animationIn?: string;
-  animationOut?: string;
+interface BottomSheetModalProps {
+  children: React.ReactNode;
+  snapPoints?: string[];
+  onChange?: (index: number) => void;
+  initialSnapIndex?: number;
+  containerStyle?: object;
+  contentContainerStyle?: object;
+  ref?: any;
 }
 
-export const CustomModal = ({isVisible, onClose, children}: ModalProps) => {
+const Modal = (
+  {
+    children,
+    snapPoints = ['25%', '50%', '90%'],
+    onChange,
+    initialSnapIndex = 0,
+  }: BottomSheetModalProps,
+  ref: any,
+) => {
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      onChange?.(index);
+    },
+    [onChange],
+  );
+
+  const renderBackdrop = React.useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+      />
+    ),
+    [],
+  );
+  // renders
   return (
-    <Modal
-      isVisible={isVisible}
-      onBackdropPress={onClose}
-      onBackButtonPress={onClose}
-      animationIn={'slideInUp'}
-      animationOut={'slideOutDown'}
-      backdropTransitionOutTiming={0}
-      useNativeDriver={true}
-      style={styles.modal}>
-      <View style={styles.container}>{children}</View>
-    </Modal>
+    <BottomSheetModalProvider>
+      <BottomSheetModal
+        backdropComponent={renderBackdrop}
+        ref={ref}
+        children={children}
+        snapPoints={['50%', '90%', '100%']}
+        onChange={handleSheetChanges}
+        index={initialSnapIndex}
+      />
+    </BottomSheetModalProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  modal: {
-    margin: 0,
-    justifyContent: 'flex-end',
-  },
   container: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    minHeight: 200,
+    flex: 1,
+    backgroundColor: 'grey',
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 36,
+    alignItems: 'center',
   },
 });
+
+export default forwardRef(Modal);

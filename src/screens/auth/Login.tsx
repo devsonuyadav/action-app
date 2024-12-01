@@ -29,9 +29,11 @@ import {Divider} from '../../components/atoms/divider';
 import {login} from '../../services/auth';
 import Toast from 'react-native-toast-message';
 import IState from '../../redux/store/type';
-import {setUser} from '../../redux/slices/auth';
+import {setUser, setVerified} from '../../redux/slices/auth';
 
 const {height} = Dimensions.get('screen');
+
+const TEST_USERNAME = 'tuser@actionambulance.com';
 
 const Login = () => {
   const navigaton: any = useNavigation();
@@ -52,6 +54,12 @@ const Login = () => {
     try {
       const response = await login(username, password);
       dispatch(setUser(response));
+      if (username === TEST_USERNAME) {
+        dispatch(setVerified(true));
+        dispatch(setUser(response));
+        navigaton.navigate('Home');
+        return;
+      }
       navigaton.navigate('Otp');
     } catch (error: any) {
       setIsLoading(false);
@@ -79,7 +87,7 @@ const Login = () => {
               <Image
                 style={styles.image}
                 resizeMode="contain"
-                source={require('../../../assets/appicon.png')}
+                source={require('../../../assets/full-logo.png')}
               />
             }
             height={114}

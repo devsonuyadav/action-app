@@ -1,5 +1,5 @@
 {
-  "name": "AwesomeProject",
+  "name": "actionapp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5.0.6",
     "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-navigation/native": "^7.0.7",
     "@react-navigation/native-stack": "^7.1.8",
@@ -19,6 +20,7 @@
     "react-hook-form": "^7.53.2",
     "react-native": "0.76.3",
     "react-native-gesture-handler": "^2.21.2",
+    "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-modal": "^13.0.1",
     "react-native-otp-entry": "^1.7.3",
     "react-native-reanimated": "^3.16.3",
@@ -31,12 +33,13 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-private-methods": "^7.25.9",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
-    "@react-native/babel-preset": "0.76.3",
+    "@react-native/babel-preset": "^0.76.3",
     "@react-native/eslint-config": "0.76.3",
     "@react-native/metro-config": "0.76.3",
     "@react-native/typescript-config": "0.76.3",
@@ -47,6 +50,7 @@
     "babel-jest": "^29.6.3",
     "eslint": "^8.19.0",
     "jest": "^29.6.3",
+    "metro-react-native-babel-preset": "^0.77.0",
     "prettier": "2.8.8",
     "react-test-renderer": "18.3.1",
     "typescript": "5.0.4"
