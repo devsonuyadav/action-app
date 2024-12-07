@@ -30,7 +30,7 @@ const AuthNavigator = () => {
         name="Otp"
         component={Otp}
         options={{
-          headerTitle: 'Verify Otp',
+          headerTitle: 'Verification',
           headerStyle: {
             backgroundColor: COLORS.primary.strong,
           },

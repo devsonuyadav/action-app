@@ -53,7 +53,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       id: 1,
       title: 'Punch In/Out',
       icon: require('../../assets/punch.png'),
-      url: `https://google.com`,
+      url: 'https://google.com',
     },
     {
       id: 2,
@@ -96,13 +96,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           <Image source={require('../../assets/full-logo.png')} />
         </View>
         <FlatList
-          data={homeData}
+          data={[...homeData, ...homeData]}
           renderItem={({item}) => <HomeCard item={item} />}
           numColumns={2}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={{
             padding: 12,
-            flex: 1,
+            minHeight: '100%',
             backgroundColor: COLORS.primary.strong,
           }}
           style={{flex: 1}}
@@ -224,11 +224,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#154e87',
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    height: '20%',
+    backgroundColor: '#154e87',
   },
   logoutContainer: {
     flexDirection: 'row',

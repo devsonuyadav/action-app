@@ -2,7 +2,10 @@ import {View, Text, StyleSheet} from 'react-native';
 import {OtpInput} from 'react-native-otp-entry';
 import {COLORS, FONTS} from '../../theme';
 import Button from '../../components/atoms/button';
-import {heightPercentageToDP} from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
 import IState from '../../redux/store/type';
 import {useDispatch, useSelector} from 'react-redux';
 import React from 'react';
@@ -37,6 +40,12 @@ const Otp = () => {
       dispatch(setVerified(true));
       await AsyncStorage.setItem('employeeId', user.employeeId.toString());
       // navigation.navigate('Home');
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid code',
+        text1Style: {fontSize: widthPercentageToDP(4)},
+      });
     }
   };
 
@@ -66,8 +75,9 @@ const Otp = () => {
       <View
         style={{
           width: '100%',
-          height: heightPercentageToDP(9),
-          paddingHorizontal: 20,
+          paddingHorizontal: 16,
+          height: heightPercentageToDP(4),
+          marginBottom: heightPercentageToDP(4),
         }}>
         <Button title="Verify" onPress={onSubmit} />
       </View>
@@ -85,13 +95,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    marginTop: 100,
     fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.primary.strong,
+    marginTop: 100,
     marginBottom: 12,
+    fontWeight: '700',
     letterSpacing: 0.5,
     fontFamily: FONTS.MEDIUM,
+    color: COLORS.primary.strong,
   },
   error: {
     color: 'red',
@@ -99,12 +109,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: COLORS.primary.strong,
-    marginBottom: 40,
-    textAlign: 'center',
     lineHeight: 22,
     maxWidth: '80%',
+    marginBottom: 40,
+    textAlign: 'center',
     fontFamily: FONTS.REGULAR,
+    color: COLORS.primary.strong,
   },
   otpWrapper: {
     width: '100%',
@@ -118,14 +128,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   otpInput: {
-    borderWidth: 1.5,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderColor: 'white',
-    fontSize: 24,
-    color: 'white',
     width: 50,
     height: 50,
+    fontSize: 24,
+    color: 'white',
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: 'white',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
 });
 
