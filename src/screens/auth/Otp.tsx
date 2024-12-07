@@ -36,6 +36,7 @@ const Otp = () => {
       Toast.show({
         text1: 'Verification successful',
         type: 'success',
+        text1Style: {fontSize: widthPercentageToDP(4)},
       });
       dispatch(setVerified(true));
       await AsyncStorage.setItem('employeeId', user.employeeId.toString());
