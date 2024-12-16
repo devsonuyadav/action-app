@@ -1,11 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
   Image,
-  StyleSheet,
   StatusBar,
-  TouchableOpacity,
   FlatList,
   TextInput,
   Pressable,
@@ -15,24 +14,28 @@ import {
   Linking,
   AppState,
   ActivityIndicator,
+  TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
+
+import {useDispatch, useSelector} from 'react-redux';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/types';
-import {COLORS, FONTS} from '../theme';
+
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch, useSelector} from 'react-redux';
-import {logout, setVerified} from '../redux/slices/auth';
-import {openBrowser} from '../components/browser';
+
 import IState from '../redux/store/type';
+import {RootStackParamList} from '../navigation/types';
+import {logout, setVerified} from '../redux/slices/auth';
+
+import {COLORS, FONTS} from '../theme';
 import Modal from '../components/atoms/modal';
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import {
-  GeolocationService,
-  requestLocationPermission,
-} from '../services/geolocation';
+
+import {GeolocationService} from '../services/geolocation';
+import {openBrowser} from '../components/browser';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -142,6 +145,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     dispatch(setVerified(false));
   };
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const HomeCard = ({item}: any) => {
     return (
       <TouchableOpacity
@@ -193,6 +197,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
         <StatusBar barStyle="light-content" backgroundColor="#154e87" />
         <View style={styles.header}>
           <View style={{width: '100%', height: 100, marginTop: 30}}>
+            <View style={styles.notificationContainer}>
+              <TouchableOpacity
+                style={styles.bellButton}
+                onPress={() => navigation.navigate('Notifications' as never)}>
+                <MaterialCommunityIcons name="bell" size={24} color={'#FFFF'} />
+                <Text style={styles.notificationBadge}>24</Text>
+              </TouchableOpacity>
+            </View>
             <Image
               source={require('../../assets/full-logo.png')}
               style={{width: '100%', height: 100}}
@@ -362,5 +374,28 @@ const styles = StyleSheet.create({
   modalContainer: {
     padding: 20,
     alignItems: 'center',
+  },
+  notificationContainer: {
+    zIndex: 20,
+    width: '100%',
+    position: 'relative',
+  },
+  bellButton: {
+    top: 4,
+    right: 10,
+    position: 'absolute',
+  },
+  notificationBadge: {
+    right: 12,
+    padding: 2,
+    fontSize: 12,
+    minWidth: 20,
+    borderRadius: 100,
+    fontWeight: '700',
+    aspectRatio: 1 / 1,
+    textAlign: 'center',
+    position: 'absolute',
+    textAlignVertical: 'center',
+    backgroundColor: COLORS.warning.default,
   },
 });
