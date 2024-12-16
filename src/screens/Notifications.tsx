@@ -16,7 +16,6 @@ const notifications = [
     user: 'John Doe',
     action: 'liked your post',
     time: '2 minutes ago',
-    avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
     read: false,
   },
   {
@@ -25,7 +24,6 @@ const notifications = [
     user: 'Jane Smith',
     action: 'commented on your photo',
     time: '1 hour ago',
-    avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
     read: true,
   },
   {
@@ -34,7 +32,6 @@ const notifications = [
     user: 'Mike Johnson',
     action: 'started following you',
     time: '3 hours ago',
-    avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
     read: false,
   },
   {
@@ -43,7 +40,6 @@ const notifications = [
     user: 'Sarah Wilson',
     action: 'mentioned you in a comment',
     time: '1 day ago',
-    avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
     read: true,
   },
 ];
@@ -51,9 +47,9 @@ const notifications = [
 const NotificationItem = ({item, onPress}: any) => (
   <TouchableOpacity onPress={onPress}>
     <View style={[styles.notificationItem, !item.read && styles.unread]}>
-      <Image source={{uri: item.avatar}} style={styles.avatar} />
       <View style={styles.contentContainer}>
-        <Text style={styles.text}>
+        {!item.read && <View style={styles.unreadDot} />}
+        <Text style={[styles.text, !item.read && styles.unreadText]}>
           <Text style={styles.username}>{item.user}</Text> {item.action}
         </Text>
         <Text style={styles.time}>{item.time}</Text>
@@ -107,6 +103,8 @@ const styles = StyleSheet.create({
   },
   unread: {
     backgroundColor: '#f0f9ff',
+    borderLeftWidth: 4,
+    borderLeftColor: '#2196F3',
   },
   avatar: {
     width: 50,
@@ -117,14 +115,31 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
+    position: 'relative',
+    paddingLeft: 16,
+  },
+  unreadDot: {
+    position: 'absolute',
+    left: 0,
+    top: '50%',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#2196F3',
+    marginTop: -4,
   },
   text: {
     fontSize: 16,
-    color: '#333',
+    color: '#666',
     marginBottom: 4,
+  },
+  unreadText: {
+    color: '#333',
+    fontWeight: '500',
   },
   username: {
     fontWeight: 'bold',
+    color: '#333',
   },
   time: {
     fontSize: 14,

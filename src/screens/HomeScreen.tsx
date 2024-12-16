@@ -381,12 +381,12 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   bellButton: {
-    top: 4,
-    right: 10,
+    top: 0,
+    right: 0,
     position: 'absolute',
   },
   notificationBadge: {
-    right: 12,
+    right: 18,
     padding: 2,
     fontSize: 12,
     minWidth: 20,
