@@ -191,6 +191,7 @@ const Login = () => {
                 style={{
                   width: '100%',
                   paddingTop: keyboardVisible ? '22%' : '90%',
+                  marginTop: -30,
                 }}>
                 <Button
                   title="Login"
@@ -223,6 +224,9 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: 'center',
+    width: '100%',
+    height: 100,
+    marginTop: 30,
   },
   loginContainer: {
     left: 0,

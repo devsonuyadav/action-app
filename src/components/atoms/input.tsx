@@ -103,11 +103,10 @@ const Input = (
           },
         ]}>
         {props?.icon && (
-          <View style={{marginLeft: wp(3), marginRight: isPad ? wp(3) : 0}}>
+          <View style={{marginLeft: wp(2), marginRight: isPad ? wp(3) : wp(0)}}>
             {props.icon}
           </View>
         )}
-
         {props.type === 'DEFAULT' ? null : (
           <Animated.Text
             style={{
@@ -121,7 +120,7 @@ const Input = (
 
               left: isPad
                 ? wp(props?.icon ? 12 : 7)
-                : wp(props?.icon ? 9.5 : 1.5),
+                : wp(props?.icon ? (Platform.OS === 'android' ? 10 : 12) : 1.5),
 
               fontFamily: FONTS.MEDIUM,
               right: 0,
@@ -152,9 +151,13 @@ const Input = (
                     outputRange: props.showClear
                       ? isPad
                         ? [-wp(20), wp(1)]
+                        : Platform.OS === 'android'
+                        ? [0, wp(8)]
                         : [wp(3), wp(8)]
                       : isPad
                       ? [-wp(55), 5]
+                      : Platform.OS === 'android'
+                      ? [-40, 5]
                       : [-30, 5],
                   }),
                 },

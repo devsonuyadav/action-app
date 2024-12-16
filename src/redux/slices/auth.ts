@@ -24,6 +24,11 @@ export interface IAuthState {
   user: IUserState;
   isLoading: boolean;
   isVerified: boolean;
+  isLocationPermissionGranted: boolean;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 const initialState: IAuthState = {
@@ -48,6 +53,11 @@ const initialState: IAuthState = {
   },
   isLoading: false,
   isVerified: false,
+  isLocationPermissionGranted: false,
+  location: {
+    latitude: 0,
+    longitude: 0,
+  },
 };
 
 const authSlice = createSlice({
@@ -69,9 +79,25 @@ const authSlice = createSlice({
     setVerified: (state, action: PayloadAction<boolean>) => {
       state.isVerified = action.payload;
     },
+    setLocationPermission: (state, action: PayloadAction<boolean>) => {
+      state.isLocationPermissionGranted = action.payload;
+    },
+    setLocation: (
+      state,
+      action: PayloadAction<{latitude: number; longitude: number}>,
+    ) => {
+      state.location = action.payload;
+    },
   },
 });
 
-export const {setUser, logout, setLoading, setError, setVerified} =
-  authSlice.actions;
+export const {
+  setUser,
+  logout,
+  setLoading,
+  setError,
+  setVerified,
+  setLocationPermission,
+  setLocation,
+} = authSlice.actions;
 export default authSlice.reducer;

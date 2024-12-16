@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,12 @@ import {
   FlatList,
   TextInput,
   Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  Linking,
+  AppState,
+  ActivityIndicator,
 } from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/types';
@@ -22,38 +28,46 @@ import {logout, setVerified} from '../redux/slices/auth';
 import {openBrowser} from '../components/browser';
 import IState from '../redux/store/type';
 import Modal from '../components/atoms/modal';
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
+import {
+  GeolocationService,
+  requestLocationPermission,
+} from '../services/geolocation';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
 };
 
-const HomeCard = ({item}: any) => {
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        openBrowser(item.url);
-      }}
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: 20,
-      }}>
-      <Image source={item.icon} style={{height: 150, width: 150}} />
-    </TouchableOpacity>
-  );
-};
-
 export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const {user} = useSelector((store: IState) => store.auth);
+  const [latlng, setLatlng] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+
+  const [locationLoading, setLocationLoading] = useState(false);
+
+  const getUrl = () => {
+    return `https://ez-schedules.com/EmployeeMobilePunchInOut.aspx?Eid=${
+      user.employeeId
+    }&Lat=${latlng.latitude * user.employeeId}&Long=${
+      latlng.longitude * user.employeeId
+    }`;
+  };
+
   const HOME_DATA = [
     {
       id: 1,
       title: 'Punch In/Out',
       icon: require('../../assets/punch.png'),
-      url: 'https://google.com',
+      url: `https://ez-schedules.com/EmployeeMobilePunchInOut.aspx?Eid=${
+        user.employeeId
+      }&Lat=${latlng.latitude * user.employeeId}&Long=${
+        latlng.longitude * user.employeeId
+      }`,
+      locationEnabled: latlng.latitude !== 0 && latlng.longitude !== 0,
+      locationRequired: true,
+      getUrl: getUrl,
     },
     {
       id: 2,
@@ -74,12 +88,51 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       url: `https://ez-ticketsys.com/MainMenuMobile.aspx?Eid=${user.employeeId}`,
     },
   ];
+
   const [homeData, setHomeData] = useState(HOME_DATA);
+
   const modalRef = useRef<BottomSheetModal>(null);
   const dispatch = useDispatch();
+  useEffect(() => {
+    const getLocation = async () => {
+      setLocationLoading(true);
+      GeolocationService.getCurrentPosition()
+        .then(position => {
+          console.log('position', {position});
+          setLatlng({
+            latitude: position.latitude,
+            longitude: position.longitude,
+          });
+        })
+        .catch(error => {
+          Alert.alert(
+            error.message,
+            'Please enable location services to use this feature from global settings',
+          );
+          console.log('error', error);
+        })
+        .finally(() => {
+          setLocationLoading(false);
+        });
+    };
+
+    // Initial location fetch
+    getLocation();
+
+    // Add AppState listener
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'active') {
+        // Re-fetch location when app comes to foreground
+        getLocation();
+      }
+    });
+
+    // Cleanup subscription
+    return () => {
+      subscription.remove();
+    };
+  }, []);
   const onLogout = async () => {
-    // await AsyncStorage.removeItem('employeeId');
-    console.log('present', modalRef.current);
     modalRef?.current?.present();
   };
 
@@ -88,33 +141,93 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     dispatch(logout());
     dispatch(setVerified(false));
   };
+
+  const HomeCard = ({item}: any) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          if (item?.locationRequired && latlng.latitude === 0) {
+            Alert.alert(
+              'Location Required',
+              'Please enable location services to use this feature',
+              [
+                {
+                  text: 'Open Settings',
+                  onPress: () => {
+                    // Open device settings
+                    Linking.openSettings();
+                  },
+                },
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+              ],
+            );
+            return;
+          }
+          if (item.locationRequired) {
+            const url = getUrl();
+            openBrowser(url);
+          } else {
+            openBrowser(item.url);
+          }
+        }}
+        style={{
+          width: '40%',
+          margin: 20,
+        }}>
+        <Image
+          source={item.icon}
+          style={{height: wp(35), width: wp(35)}}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    );
+  };
   return (
     <>
-      <View style={{flex: 1}}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{flex: 1}}>
         <StatusBar barStyle="light-content" backgroundColor="#154e87" />
         <View style={styles.header}>
-          <Image source={require('../../assets/full-logo.png')} />
+          <View style={{width: '100%', height: 100, marginTop: 30}}>
+            <Image
+              source={require('../../assets/full-logo.png')}
+              style={{width: '100%', height: 100}}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+        <View>
+          {locationLoading && (
+            <View
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <ActivityIndicator size="large" color="#154e87" />
+              <Text
+                style={{
+                  color: COLORS.primary.strong,
+                  fontFamily: FONTS.SEMI_BOLD,
+                }}>
+                Loading Location...
+              </Text>
+            </View>
+          )}
         </View>
         <FlatList
-          data={[...homeData, ...homeData]}
+          columnWrapperStyle={{
+            justifyContent: 'flex-start',
+          }}
+          data={[...homeData]}
           renderItem={({item}) => <HomeCard item={item} />}
           numColumns={2}
+          bounces={false}
           keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{
-            padding: 12,
-            minHeight: '100%',
-            backgroundColor: COLORS.primary.strong,
-          }}
-          style={{flex: 1}}
+          contentContainerStyle={styles.contentContainer}
+          // style={{flex: 1}}
         />
-        <View
-          style={{
-            padding: 12,
-            backgroundColor: '#154e87',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+        <View style={styles.footer}>
           <View style={styles.searchContainer}>
             <AntDesign
               name="search1"
@@ -125,12 +238,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             <TextInput
               placeholder="SEARCH"
               placeholderTextColor="#d0dae4"
-              style={{
-                flex: 1,
-                color: 'white',
-                fontSize: 13,
-                fontFamily: 'Poppins-Regular',
-              }}
+              style={styles.searchInput}
               selectionColor={'white'}
               onChangeText={text => {
                 const filteredData = HOME_DATA.filter(item =>
@@ -143,22 +251,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
           <Pressable style={styles.logoutContainer} onPress={onLogout}>
             <View style={{alignItems: 'center'}}>
-              <Text
-                style={{
-                  color: COLORS.primary.strong,
-                  fontSize: 12,
-                  fontFamily: FONTS.SEMI_BOLD,
-                }}>
-                LOG
-              </Text>
-              <Text
-                style={{
-                  color: COLORS.primary.strong,
-                  fontSize: 12,
-                  fontFamily: FONTS.SEMI_BOLD,
-                }}>
-                OUT
-              </Text>
+              <Text style={styles.logoutText}>LOG</Text>
+              <Text style={styles.logoutText}>OUT</Text>
             </View>
             <MaterialCommunityIcons
               name="logout"
@@ -167,52 +261,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             />
           </Pressable>
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <Modal
         ref={modalRef}
         children={
-          <View style={{padding: 20, alignItems: 'center'}}>
-            <Text
-              style={{
-                fontSize: 18,
-                fontFamily: FONTS.SEMI_BOLD,
-                marginBottom: 20,
-                color: COLORS.primary.strong,
-              }}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>
               Are you sure you want to logout?
             </Text>
 
             <View style={{flexDirection: 'row', gap: 20}}>
               <TouchableOpacity
                 onPress={onLogoutConfirm}
-                style={{
-                  backgroundColor: COLORS.primary.strong,
-                  paddingVertical: 10,
-                  paddingHorizontal: 30,
-                  borderRadius: 8,
-                }}>
-                <Text style={{color: 'white', fontFamily: FONTS.SEMI_BOLD}}>
-                  Yes
-                </Text>
+                style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>Yes</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => {
                   modalRef?.current?.dismiss();
                 }}
-                style={{
-                  backgroundColor: '#e0e0e0',
-                  paddingVertical: 10,
-                  paddingHorizontal: 30,
-                  borderRadius: 8,
-                }}>
-                <Text
-                  style={{
-                    color: COLORS.primary.strong,
-                    fontFamily: FONTS.SEMI_BOLD,
-                  }}>
-                  No
-                </Text>
+                style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>No</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -248,5 +318,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     backgroundColor: '#456c95',
+  },
+  contentContainer: {
+    padding: 12,
+    minHeight: '100%',
+    backgroundColor: COLORS.primary.strong,
+    alignItems: 'flex-start',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#154e87',
+    padding: 12,
+  },
+  searchInput: {
+    flex: 1,
+    color: 'white',
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+  },
+  logoutText: {
+    color: COLORS.primary.strong,
+    fontSize: 12,
+    fontFamily: FONTS.SEMI_BOLD,
+  },
+  modalText: {
+    fontSize: 18,
+    fontFamily: FONTS.SEMI_BOLD,
+    marginBottom: 20,
+    color: COLORS.primary.strong,
+  },
+  modalButton: {
+    backgroundColor: COLORS.primary.strong,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  modalButtonText: {
+    color: 'white',
+    fontFamily: FONTS.SEMI_BOLD,
+  },
+  modalContainer: {
+    padding: 20,
+    alignItems: 'center',
   },
 });

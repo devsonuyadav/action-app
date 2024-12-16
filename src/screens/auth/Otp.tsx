@@ -1,4 +1,10 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {OtpInput} from 'react-native-otp-entry';
 import {COLORS, FONTS} from '../../theme';
 import Button from '../../components/atoms/button';
@@ -53,7 +59,10 @@ const Otp = () => {
   console.log(user.verificationCode);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={100}
+      style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Verification Code</Text>
         <Text style={styles.subtitle}>
@@ -65,7 +74,8 @@ const Otp = () => {
           numberOfDigits={6}
           focusColor={COLORS.primary.default}
           focusStickBlinkingDuration={500}
-          autoFocus
+          blurOnFilled={true}
+          autoFocus={false}
           theme={{
             containerStyle: styles.otpWrapper,
             inputsContainerStyle: styles.otpInputsContainer,
@@ -78,11 +88,11 @@ const Otp = () => {
           width: '100%',
           paddingHorizontal: 16,
           height: heightPercentageToDP(4),
-          marginBottom: heightPercentageToDP(4),
+          marginBottom: heightPercentageToDP(5),
         }}>
         <Button title="Verify" onPress={onSubmit} />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
