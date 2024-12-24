@@ -197,14 +197,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
         <StatusBar barStyle="light-content" backgroundColor="#154e87" />
         <View style={styles.header}>
           <View style={{width: '100%', height: 100, marginTop: 30}}>
-            <View style={styles.notificationContainer}>
-              <TouchableOpacity
-                style={styles.bellButton}
-                onPress={() => navigation.navigate('Notifications' as never)}>
-                <MaterialCommunityIcons name="bell" size={24} color={'#FFFF'} />
-                <Text style={styles.notificationBadge}>24</Text>
-              </TouchableOpacity>
-            </View>
             <Image
               source={require('../../assets/full-logo.png')}
               style={{width: '100%', height: 100}}
@@ -237,8 +229,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           bounces={false}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.contentContainer}
-          // style={{flex: 1}}
         />
+
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => navigation.navigate('Notifications' as never)}>
+          <MaterialCommunityIcons name="bell" size={24} color={'#FFFF'} />
+          <Text style={styles.notificationBadge}>24</Text>
+        </TouchableOpacity>
+
         <View style={styles.footer}>
           <View style={styles.searchContainer}>
             <AntDesign
@@ -375,26 +374,36 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
-  notificationContainer: {
-    zIndex: 20,
-    width: '100%',
-    position: 'relative',
-  },
-  bellButton: {
-    top: 0,
-    right: 0,
+  floatingButton: {
     position: 'absolute',
+    bottom: 110,
+    right: 20,
+    backgroundColor: COLORS.primary.default,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   notificationBadge: {
-    right: 18,
-    padding: 2,
-    fontSize: 12,
+    top: 1,
+    right: 2,
+    height: 20,
     minWidth: 20,
-    borderRadius: 100,
+    fontSize: 12,
+    color: '#FFFF',
+    borderRadius: 10,
     fontWeight: '700',
-    aspectRatio: 1 / 1,
-    textAlign: 'center',
     position: 'absolute',
+    textAlign: 'center',
     textAlignVertical: 'center',
     backgroundColor: COLORS.warning.default,
   },

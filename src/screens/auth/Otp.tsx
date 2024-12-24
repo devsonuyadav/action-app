@@ -60,7 +60,8 @@ const Otp = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior="padding"
       keyboardVerticalOffset={100}
       style={styles.container}>
       <View style={styles.contentContainer}>

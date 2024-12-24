@@ -1,17 +1,21 @@
 // src/screens/NotificationDetail.tsx
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {COLORS} from '../theme';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const NotificationDetail = ({route, navigation}: any) => {
   const {notification} = route.params;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>← Back</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Icon name="chevron-back" size={24} color="#FFF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notification Detail</Text>
+        <Text style={styles.header}>Notifications</Text>
       </View>
 
       <View style={styles.content}>
@@ -31,22 +35,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
+  headerContainer: {
     flexDirection: 'row',
+    paddingVertical: 8,
     alignItems: 'center',
-    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    marginTop: 40,
+    backgroundColor: COLORS.primary.default,
+  },
+  header: {
+    flex: 1,
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+    paddingRight: 48,
+    textAlign: 'center',
+  },
+  backButton: {
+    padding: 16,
+    marginRight: -16,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginLeft: 20,
-  },
-  backButton: {
-    fontSize: 18,
-    color: '#007AFF',
   },
   content: {
     padding: 20,

@@ -1,12 +1,7 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {COLORS} from '../theme';
 
 // Dummy notification data
 const notifications = [
@@ -65,7 +60,14 @@ const Notifications = ({navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Notifications</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Icon name="chevron-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={styles.header}>Notifications</Text>
+      </View>
       <FlatList
         data={notifications}
         keyExtractor={item => item.id}
@@ -85,24 +87,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 40,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 16,
+  headerContainer: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    backgroundColor: COLORS.primary.default,
+  },
+  header: {
+    flex: 1,
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+    paddingRight: 48,
+    textAlign: 'center',
+  },
+  backButton: {
+    padding: 16,
+    marginRight: -16,
   },
   notificationItem: {
-    flexDirection: 'row',
     padding: 16,
+    flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     backgroundColor: '#fff',
   },
   unread: {
-    backgroundColor: '#f0f9ff',
+    backgroundColor: '#E3F2FD',
     borderLeftWidth: 4,
     borderLeftColor: '#2196F3',
   },
@@ -130,11 +144,10 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: '#666',
+    color: '#333',
     marginBottom: 4,
   },
   unreadText: {
-    color: '#333',
     fontWeight: '500',
   },
   username: {
