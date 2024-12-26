@@ -11,11 +11,13 @@ export interface INotification {
 export interface INotificationState {
   notificationList: INotification[];
   notificationUnreadCount: number;
+  currentPage: number;
 }
 
 const initialState: INotificationState = {
   notificationList: [],
   notificationUnreadCount: 0,
+  currentPage: 1,
 };
 
 export const notificationSlice = createSlice({
@@ -28,9 +30,12 @@ export const notificationSlice = createSlice({
     setNotificationUnreadCount: (state, action: PayloadAction<number>) => {
       state.notificationUnreadCount = action.payload;
     },
+    setCurrentPage: (state, action: PayloadAction<number>) => {
+      state.currentPage = action.payload;
+    },
   },
 });
 
-export const {setNotificationList, setNotificationUnreadCount} =
+export const {setNotificationList, setNotificationUnreadCount, setCurrentPage} =
   notificationSlice.actions;
 export default notificationSlice.reducer;
