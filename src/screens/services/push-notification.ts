@@ -82,10 +82,10 @@ export const setupPushNotificationListeners = () => {
     console.log('Push notification token refreshed:', token);
   });
   Notifee.onBackgroundEvent(async ({type, detail}) => {
-    console.log('Push notification background event:', type, detail);
+    handlePushNotification(detail.notification);
   });
   Notifee.onForegroundEvent(async ({type, detail}) => {
-    console.log('Push notification foreground event:', type, detail);
+    handlePushNotification(detail.notification);
   });
 };
 
