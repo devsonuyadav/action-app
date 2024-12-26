@@ -56,7 +56,7 @@ const Otp = () => {
     }
   };
 
-  console.log(user.verificationCode);
+  console.log('>>.', user.verificationCode);
 
   return (
     <KeyboardAvoidingView

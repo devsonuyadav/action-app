@@ -33,6 +33,10 @@ import {
   GeolocationService,
   requestLocationPermission,
 } from '../services/geolocation';
+import {
+  configurePushNotification,
+  requestPushNotificationPermission,
+} from './services/push-notification';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -93,12 +97,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const modalRef = useRef<BottomSheetModal>(null);
   const dispatch = useDispatch();
+
   useEffect(() => {
     const getLocation = async () => {
       setLocationLoading(true);
       GeolocationService.getCurrentPosition()
         .then(position => {
-          console.log('position', {position});
           setLatlng({
             latitude: position.latitude,
             longitude: position.longitude,
@@ -111,9 +115,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           );
           console.log('error', error);
         })
-        .finally(() => {
+        .finally(async () => {
           setLocationLoading(false);
         });
+      await configurePushNotification();
     };
 
     // Initial location fetch
