@@ -22,20 +22,16 @@ export const updateUserDeviceToken = async (token: string) => {
   }
 };
 
-export const getNotifications = async (page: string, pagination = false) => {
+export const getNotifications = async (page: string) => {
   try {
     const employeeId = store.getState().auth.user.employeeId;
     const response = await api.get(
       `/Notification/GetNotificationList?employeeId=${employeeId}&pageNumber=${page}`,
     );
-    if (pagination) {
-      const prevData = store.getState().notification.notificationList;
-      store.dispatch(
-        setNotificationList([...prevData, ...response.data.notificationList]),
-      );
-    } else {
-      store.dispatch(setNotificationList(response.data.notificationList));
-    }
+    const prevData = store.getState().notification.notificationList;
+    store.dispatch(
+      setNotificationList([...prevData, ...response.data.notificationList]),
+    );
 
     store.dispatch(setCurrentPage(response.data.currentPage));
     store.dispatch(setNextPage(response.data.nextPage));

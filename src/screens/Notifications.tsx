@@ -15,10 +15,10 @@ import IState from '../redux/store/type';
 import {getNotifications} from '../services/notification';
 
 const NotificationItem = ({item, onPress}: any) => (
-  <TouchableOpacity onPress={onPress}>
+  <TouchableOpacity style={{margin: 10}} onPress={onPress}>
     <View style={[styles.notificationItem, !item.isRead && styles.unread]}>
       <View style={styles.contentContainer}>
-        {!item.read && <View style={styles.unreadDot} />}
+        {!item.isRead && <View style={styles.unreadDot} />}
         <View style={styles.text}>
           <Text style={[styles.username, !item.read && styles.unreadText]}>
             {item.title}
@@ -48,7 +48,7 @@ const Notifications = ({navigation}: any) => {
 
   const fetchNotifications = async () => {
     if (nextPage !== '') {
-      await getNotifications((parseInt(currentPage) + 1).toString(), true);
+      await getNotifications((parseInt(currentPage) + 1).toString());
     }
   };
   console.log({currentPage, nextPage});
@@ -74,8 +74,8 @@ const Notifications = ({navigation}: any) => {
         />
       </View>
       <FlatList
-        data={notificationList}
-        onEndReached={fetchNotifications}
+        data={filteredNotifications}
+        onEndReached={searchQuery ? () => {} : fetchNotifications}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
           <NotificationItem

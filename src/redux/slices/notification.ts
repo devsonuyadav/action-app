@@ -36,7 +36,7 @@ export const notificationSlice = createSlice({
       state.currentPage = action.payload;
     },
     setNextPage: (state, action: PayloadAction<string>) => {
-      state.currentPage = action.payload;
+      state.nextPage = action.payload;
     },
   },
 });
