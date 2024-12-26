@@ -38,6 +38,13 @@ export const notificationSlice = createSlice({
     setNextPage: (state, action: PayloadAction<string>) => {
       state.nextPage = action.payload;
     },
+    setReadNotification: (state, action: PayloadAction<string>) => {
+      state.notificationList = state.notificationList.map(notification =>
+        notification.id === action.payload
+          ? {...notification, isRead: true}
+          : notification,
+      );
+    },
   },
 });
 
@@ -46,5 +53,6 @@ export const {
   setNotificationUnreadCount,
   setCurrentPage,
   setNextPage,
+  setReadNotification,
 } = notificationSlice.actions;
 export default notificationSlice.reducer;

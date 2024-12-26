@@ -36,7 +36,10 @@ import IState from '../redux/store/type';
 import Modal from '../components/atoms/modal';
 import {GeolocationService} from '../services/geolocation';
 import {configurePushNotification} from './services/push-notification';
-import {getNotifications} from '../services/notification';
+import {
+  getNotifications,
+  getNotificationsCount,
+} from '../services/notification';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 
 type HomeScreenProps = {
@@ -106,7 +109,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   };
   useEffect(() => {
     fetchNotifications();
+    getNotificationsCount();
   }, []);
+
+  const {notificationUnreadCount} = useSelector(
+    (store: IState) => store.notification,
+  );
 
   useEffect(() => {
     const getLocation = async () => {
@@ -247,7 +255,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           style={styles.floatingButton}
           onPress={() => navigation.navigate('Notifications' as never)}>
           <MaterialCommunityIcons name="bell" size={24} color={'#FFFF'} />
-          <Text style={styles.notificationBadge}>24</Text>
+          <Text style={styles.notificationBadge}>
+            {notificationUnreadCount}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.footer}>

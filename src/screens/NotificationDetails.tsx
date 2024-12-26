@@ -1,11 +1,47 @@
 // src/screens/NotificationDetail.tsx
-import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {COLORS} from '../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
+import {openBrowser} from '../components/browser';
+import {postNotificationsRead} from '../services/notification';
 
 const NotificationDetail = ({route, navigation}: any) => {
   const {notification} = route.params;
+
+  const renderTextWithLinks = (text: string) => {
+    const urlPattern =
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+
+    const parts = text.split(urlPattern);
+    const matches = text.match(urlPattern) || [];
+
+    return (
+      <Text style={styles.detailsText}>
+        {parts.reduce((acc: React.ReactNode[], part, index) => {
+          acc.push(<Text key={`text-${index}`}>{part}</Text>);
+
+          if (matches[index]) {
+            acc.push(
+              <Text
+                key={`link-${index}`}
+                style={styles.link}
+                onPress={() => openBrowser(matches[index])}>
+                {matches[index]}
+              </Text>,
+            );
+          }
+
+          return acc;
+        }, [])}
+      </Text>
+    );
+  };
+
+  useEffect(() => {
+    postNotificationsRead(notification.id);
+  }, [notification]);
 
   return (
     <View style={styles.container}>
@@ -19,11 +55,14 @@ const NotificationDetail = ({route, navigation}: any) => {
       </View>
 
       <View style={styles.content}>
-        <Image source={{uri: notification.avatar}} style={styles.avatar} />
-        <View style={styles.userInfo}>
-          <Text style={styles.username}>{notification.user}</Text>
-          <Text style={styles.action}>{notification.action}</Text>
-          <Text style={styles.time}>{notification.time}</Text>
+        <View>
+          <Text style={styles.username}>{notification.title}</Text>
+          <View style={styles.detailsContainer}>
+            {renderTextWithLinks(notification.details)}
+          </View>
+          <Text style={styles.time}>
+            {moment(notification.createdOn).fromNow()}
+          </Text>
         </View>
       </View>
     </View>
@@ -62,16 +101,13 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
     marginBottom: 20,
-  },
-  userInfo: {
-    alignItems: 'center',
   },
   username: {
     fontSize: 24,
@@ -86,6 +122,19 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 16,
     color: '#666',
+  },
+  detailsContainer: {
+    marginBottom: 10,
+  },
+  detailsText: {
+    fontSize: 18,
+    lineHeight: 24,
+  },
+  link: {
+    color: COLORS.primary.default,
+    textDecorationLine: 'underline',
+    fontSize: 18,
+    lineHeight: 24,
   },
 });
 

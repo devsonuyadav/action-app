@@ -33,7 +33,6 @@ const NotificationItem = ({item, onPress}: any) => (
 
 const Notifications = ({navigation}: any) => {
   const [searchQuery, setSearchQuery] = React.useState('');
-
   const {notificationList, currentPage, nextPage} = useSelector(
     (store: IState) => store.notification,
   );
@@ -51,7 +50,6 @@ const Notifications = ({navigation}: any) => {
       await getNotifications((parseInt(currentPage) + 1).toString());
     }
   };
-  console.log({currentPage, nextPage});
 
   return (
     <View style={styles.container}>
@@ -68,6 +66,7 @@ const Notifications = ({navigation}: any) => {
         <Icon name="search" size={20} color="#666" />
         <TextInput
           style={styles.searchInput}
+          placeholderTextColor={'black'}
           placeholder="Search notifications..."
           value={searchQuery}
           onChangeText={setSearchQuery}
