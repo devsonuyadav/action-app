@@ -3,7 +3,6 @@
 import messaging from '@react-native-firebase/messaging';
 import Notifee from '@notifee/react-native';
 import {Platform, PermissionsAndroid} from 'react-native';
-import firebase from '@react-native-firebase/app';
 import {updateUserDeviceToken} from '../../services/notification';
 
 export const requestPushNotificationPermission = async () => {
@@ -75,6 +74,19 @@ export const setupPushNotificationListeners = () => {
   messaging().onNotificationOpenedApp(message => {
     console.log('Push notification opened:', message);
   });
+  messaging().onMessage(message => {
+    console.log(JSON.stringify(message, null, 2));
+    handlePushNotification(message);
+  });
+  messaging().onTokenRefresh(token => {
+    console.log('Push notification token refreshed:', token);
+  });
+  Notifee.onBackgroundEvent(async ({type, detail}) => {
+    console.log('Push notification background event:', type, detail);
+  });
+  Notifee.onForegroundEvent(async ({type, detail}) => {
+    console.log('Push notification foreground event:', type, detail);
+  });
 };
 
 export const configurePushNotification = async () => {
@@ -84,7 +96,6 @@ export const configurePushNotification = async () => {
   if (isPermissionGranted) {
     const token = await getPushNotificationToken();
     console.log('Push notification token:', token);
-    setupPushNotificationListeners();
   }
 };
 
@@ -94,10 +105,12 @@ export const handlePushNotification = async (message: any) => {
     name: 'Default Channel',
   });
 
+  const notification = message.notification;
+  const notificationId = message.data?.notificationId;
+  console.log('test');
   await Notifee.displayNotification({
-    title: message.title,
-    body: message.body,
-    data: message.data,
+    title: notification.title,
+    body: notification.body,
     android: {
       channelId,
     },
