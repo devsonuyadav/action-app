@@ -3,7 +3,6 @@ import {AppNavigator} from './src/navigation/AppNavigator';
 import Toast from 'react-native-toast-message';
 import {store} from './src/redux/store';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import notifee, {EventType} from '@notifee/react-native';
 import {useEffect} from 'react';
 import {setupPushNotificationListeners} from './src/screens/services/push-notification';
 

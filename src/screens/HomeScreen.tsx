@@ -34,15 +34,10 @@ import {COLORS, FONTS} from '../theme';
 import {openBrowser} from '../components/browser';
 import IState from '../redux/store/type';
 import Modal from '../components/atoms/modal';
+import {GeolocationService} from '../services/geolocation';
+import {configurePushNotification} from './services/push-notification';
+import {getNotifications} from '../services/notification';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import {
-  GeolocationService,
-  requestLocationPermission,
-} from '../services/geolocation';
-import {
-  configurePushNotification,
-  requestPushNotificationPermission,
-} from './services/push-notification';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -103,6 +98,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const modalRef = useRef<BottomSheetModal>(null);
   const dispatch = useDispatch();
+
+  const {currentPage} = useSelector((store: IState) => store.notification);
+
+  const fetchNotifications = async () => {
+    await getNotifications(currentPage);
+  };
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   useEffect(() => {
     const getLocation = async () => {

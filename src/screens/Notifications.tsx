@@ -1,62 +1,57 @@
 import React from 'react';
-import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {COLORS} from '../theme';
-
-// Dummy notification data
-const notifications = [
-  {
-    id: '1',
-    type: 'like',
-    user: 'John Doe',
-    action: 'liked your post',
-    time: '2 minutes ago',
-    read: false,
-  },
-  {
-    id: '2',
-    type: 'comment',
-    user: 'Jane Smith',
-    action: 'commented on your photo',
-    time: '1 hour ago',
-    read: true,
-  },
-  {
-    id: '3',
-    type: 'follow',
-    user: 'Mike Johnson',
-    action: 'started following you',
-    time: '3 hours ago',
-    read: false,
-  },
-  {
-    id: '4',
-    type: 'mention',
-    user: 'Sarah Wilson',
-    action: 'mentioned you in a comment',
-    time: '1 day ago',
-    read: true,
-  },
-];
+import moment from 'moment';
+import {useSelector} from 'react-redux';
+import IState from '../redux/store/type';
+import {getNotifications} from '../services/notification';
 
 const NotificationItem = ({item, onPress}: any) => (
   <TouchableOpacity onPress={onPress}>
-    <View style={[styles.notificationItem, !item.read && styles.unread]}>
+    <View style={[styles.notificationItem, !item.isRead && styles.unread]}>
       <View style={styles.contentContainer}>
         {!item.read && <View style={styles.unreadDot} />}
-        <Text style={[styles.text, !item.read && styles.unreadText]}>
-          <Text style={styles.username}>{item.user}</Text> {item.action}
-        </Text>
-        <Text style={styles.time}>{item.time}</Text>
+        <View style={styles.text}>
+          <Text style={[styles.username, !item.read && styles.unreadText]}>
+            {item.title}
+          </Text>
+          <Text>{item.details}</Text>
+        </View>
+        <Text style={styles.time}>{moment(item.createdOn).fromNow()}</Text>
       </View>
     </View>
   </TouchableOpacity>
 );
 
 const Notifications = ({navigation}: any) => {
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const {notificationList, currentPage, nextPage} = useSelector(
+    (store: IState) => store.notification,
+  );
+
+  const filteredNotifications = notificationList.filter(notification =>
+    notification?.title?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   const handleNotificationPress = (notification: any) => {
     navigation.navigate('NotificationDetails', {notification});
   };
+
+  const fetchNotifications = async () => {
+    if (nextPage !== '') {
+      await getNotifications((parseInt(currentPage) + 1).toString(), true);
+    }
+  };
+  console.log({currentPage, nextPage});
 
   return (
     <View style={styles.container}>
@@ -68,8 +63,19 @@ const Notifications = ({navigation}: any) => {
         </TouchableOpacity>
         <Text style={styles.header}>Notifications</Text>
       </View>
+
+      <View style={styles.searchContainer}>
+        <Icon name="search" size={20} color="#666" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search notifications..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
       <FlatList
-        data={notifications}
+        data={notificationList}
+        onEndReached={fetchNotifications}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
           <NotificationItem
@@ -157,6 +163,24 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 14,
     color: '#666',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: '#f5f5f5',
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.primary.weak,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#333',
   },
 });
 

@@ -1,17 +1,12 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import React, {useCallback} from 'react';
+import {StyleSheet} from 'react-native';
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetModalProvider,
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 
 const Modal = ({children}: {children: React.ReactNode}, ref: any) => {
-  // ref
-
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
   }, []);

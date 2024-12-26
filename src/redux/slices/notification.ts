@@ -10,14 +10,16 @@ export interface INotification {
 
 export interface INotificationState {
   notificationList: INotification[];
-  notificationUnreadCount: number;
-  currentPage: number;
+  notificationUnreadCount: string;
+  currentPage: string;
+  nextPage: string;
 }
 
 const initialState: INotificationState = {
   notificationList: [],
-  notificationUnreadCount: 0,
-  currentPage: 1,
+  notificationUnreadCount: '0',
+  currentPage: '1',
+  nextPage: '',
 };
 
 export const notificationSlice = createSlice({
@@ -27,15 +29,22 @@ export const notificationSlice = createSlice({
     setNotificationList: (state, action: PayloadAction<INotification[]>) => {
       state.notificationList = action.payload;
     },
-    setNotificationUnreadCount: (state, action: PayloadAction<number>) => {
+    setNotificationUnreadCount: (state, action: PayloadAction<string>) => {
       state.notificationUnreadCount = action.payload;
     },
-    setCurrentPage: (state, action: PayloadAction<number>) => {
+    setCurrentPage: (state, action: PayloadAction<string>) => {
+      state.currentPage = action.payload;
+    },
+    setNextPage: (state, action: PayloadAction<string>) => {
       state.currentPage = action.payload;
     },
   },
 });
 
-export const {setNotificationList, setNotificationUnreadCount, setCurrentPage} =
-  notificationSlice.actions;
+export const {
+  setNotificationList,
+  setNotificationUnreadCount,
+  setCurrentPage,
+  setNextPage,
+} = notificationSlice.actions;
 export default notificationSlice.reducer;
