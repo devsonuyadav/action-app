@@ -19,7 +19,6 @@ import {
 } from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -27,14 +26,11 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import IState from '../redux/store/type';
 import {RootStackParamList} from '../navigation/types';
 import {logout, setVerified} from '../redux/slices/auth';
 
 import {COLORS, FONTS} from '../theme';
-import Modal from '../components/atoms/modal';
 
-import {GeolocationService} from '../services/geolocation';
 import {openBrowser} from '../components/browser';
 import IState from '../redux/store/type';
 import Modal from '../components/atoms/modal';

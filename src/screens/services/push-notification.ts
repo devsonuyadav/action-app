@@ -4,6 +4,7 @@ import messaging from '@react-native-firebase/messaging';
 import Notifee from '@notifee/react-native';
 import {Platform, PermissionsAndroid} from 'react-native';
 import firebase from '@react-native-firebase/app';
+import {updateUserDeviceToken} from '../../services/notification';
 
 export const requestPushNotificationPermission = async () => {
   // Check platform and Android version
@@ -50,6 +51,8 @@ export const getPushNotificationToken = async () => {
     if (!token) {
       throw new Error('Failed to get FCM token');
     }
+
+    await updateUserDeviceToken(token);
 
     console.log('Push notification token:', token);
     return token;
