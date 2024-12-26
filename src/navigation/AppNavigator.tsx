@@ -1,18 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {HomeScreen} from '../screens/HomeScreen';
-import {RootStackParamList, AuthStackParamList} from './types';
-import Login from '../screens/auth/Login';
-import Otp from '../screens/auth/Otp';
-import {COLORS} from '../theme';
 import {StatusBar} from 'react-native';
-import IState from '../redux/store/type';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {setUser, setVerified} from '../redux/slices/auth';
+import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+import Otp from '../screens/auth/Otp';
+import Login from '../screens/auth/Login';
+import {HomeScreen} from '../screens/HomeScreen';
+import Notifications from '../screens/Notifications';
 import AuthVerifier from '../screens/auth/AuthVerifier';
+import NotificationDetail from '../screens/NotificationDetails';
+
+import {RootStackParamList, AuthStackParamList} from './types';
+
+import {COLORS} from '../theme';
+import IState from '../redux/store/type';
 import {verifyUser} from '../services/auth';
+import {setUser, setVerified} from '../redux/slices/auth';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -47,6 +52,7 @@ export const AppNavigator = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkAuth = async () => {
@@ -81,6 +87,16 @@ export const AppNavigator = () => {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Notifications"
+            component={Notifications}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="NotificationDetails"
+            component={NotificationDetail}
             options={{headerShown: false}}
           />
         </Stack.Navigator>

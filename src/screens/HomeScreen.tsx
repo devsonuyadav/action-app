@@ -1,11 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
   Image,
-  StyleSheet,
   StatusBar,
-  TouchableOpacity,
   FlatList,
   TextInput,
   Pressable,
@@ -15,16 +14,27 @@ import {
   Linking,
   AppState,
   ActivityIndicator,
+  TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
+
+import {useDispatch, useSelector} from 'react-redux';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/types';
-import {COLORS, FONTS} from '../theme';
+
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch, useSelector} from 'react-redux';
+
+import IState from '../redux/store/type';
+import {RootStackParamList} from '../navigation/types';
 import {logout, setVerified} from '../redux/slices/auth';
+
+import {COLORS, FONTS} from '../theme';
+import Modal from '../components/atoms/modal';
+
+import {GeolocationService} from '../services/geolocation';
 import {openBrowser} from '../components/browser';
 import IState from '../redux/store/type';
 import Modal from '../components/atoms/modal';
@@ -147,6 +157,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     dispatch(setVerified(false));
   };
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const HomeCard = ({item}: any) => {
     return (
       <TouchableOpacity
@@ -230,8 +241,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           bounces={false}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.contentContainer}
-          // style={{flex: 1}}
         />
+
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => navigation.navigate('Notifications' as never)}>
+          <MaterialCommunityIcons name="bell" size={24} color={'#FFFF'} />
+          <Text style={styles.notificationBadge}>24</Text>
+        </TouchableOpacity>
+
         <View style={styles.footer}>
           <View style={styles.searchContainer}>
             <AntDesign
@@ -367,5 +385,38 @@ const styles = StyleSheet.create({
   modalContainer: {
     padding: 20,
     alignItems: 'center',
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 110,
+    right: 20,
+    backgroundColor: COLORS.primary.default,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  notificationBadge: {
+    top: 1,
+    right: 2,
+    height: 20,
+    minWidth: 20,
+    fontSize: 12,
+    color: '#FFFF',
+    borderRadius: 10,
+    fontWeight: '700',
+    position: 'absolute',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    backgroundColor: COLORS.warning.default,
   },
 });
